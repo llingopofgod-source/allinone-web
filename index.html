@@ -3,354 +3,491 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A1 — Protocolo de acceso</title>
-<meta name="description" content="No llegaste aquí por casualidad. Solicita acceso.">
-<meta property="og:title" content="A1 — Protocolo de acceso anticipado">
-<meta property="og:description" content="La aplicación de la que nadie te ha hablado todavía.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23050505'/><text x='50' y='66' font-size='44' text-anchor='middle' fill='%234ADE80' font-family='monospace' font-weight='bold'>A1</text></svg>">
+<title>A1</title>
+<meta name="description" content="El sistema no fue construido para todos.">
+<meta property="og:title" content="A1">
+<meta property="og:description" content="El sistema no fue construido para todos.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23030303'/><circle cx='50' cy='50' r='7' fill='%23F4F2ED'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75,300;75,500;75,700;75,900&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#050505; --ink:#EDEBE6; --dim:#8A877F; --faint:#4A4844;
-  --line:#1C1B19; --green:#4ADE80; --amber:#FBBF24; --red:#F87171;
-  --serif:'Fraunces',serif; --mono:'IBM Plex Mono',monospace; --sans:'Instrument Sans',sans-serif;
+  --void:#030303; --panel:#080807; --ink:#F4F2ED; --dim:#8F8C86; --faint:#4A4844;
+  --line:#181715; --green:#4ADE80; --amber:#FBBF24;
+  --disp:'Archivo',sans-serif; --mono:'IBM Plex Mono',monospace; --sans:'Instrument Sans',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg); color:var(--ink); font-family:var(--sans); overflow-x:hidden; -webkit-font-smoothing:antialiased}
-::selection{background:var(--green); color:#04140a}
+body{background:var(--void); color:var(--ink); font-family:var(--sans); overflow-x:hidden; -webkit-font-smoothing:antialiased}
+::selection{background:var(--ink); color:var(--void)}
 
-/* film grain */
-.grain{position:fixed; inset:-100px; z-index:80; pointer-events:none; opacity:.07;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation:grain 7s steps(10) infinite}
-@keyframes grain{0%,100%{transform:translate(0,0)}20%{transform:translate(-30px,20px)}40%{transform:translate(20px,-30px)}60%{transform:translate(-20px,-20px)}80%{transform:translate(30px,30px)}}
+/* ── atmósfera: orbes lentísimos + grano ── */
+.orb{position:fixed; border-radius:50%; filter:blur(110px); pointer-events:none; z-index:0; will-change:transform}
+.orb1{width:52vw; height:52vw; left:-18vw; top:-12vw; background:radial-gradient(circle,#101418 0%,transparent 68%); animation:drift1 46s ease-in-out infinite alternate}
+.orb2{width:44vw; height:44vw; right:-16vw; bottom:-14vw; background:radial-gradient(circle,#14100E 0%,transparent 68%); animation:drift2 58s ease-in-out infinite alternate}
+@keyframes drift1{to{transform:translate3d(9vw,7vh,0) scale(1.15)}}
+@keyframes drift2{to{transform:translate3d(-8vw,-9vh,0) scale(1.1)}}
+.grain{position:fixed; inset:-100px; z-index:60; pointer-events:none; opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 8s steps(10) infinite}
+@keyframes grain{0%,100%{transform:translate(0,0)}25%{transform:translate(-28px,18px)}50%{transform:translate(22px,-26px)}75%{transform:translate(-18px,-16px)}}
 
-/* letterbox */
-.bar{position:fixed; left:0; right:0; height:52px; background:#000; z-index:70}
-.bar.top{top:0}.bar.bottom{bottom:0}
+/* ── glow que sigue al cursor ── */
+#cursorGlow{position:fixed; width:520px; height:520px; border-radius:50%; pointer-events:none; z-index:1;
+  background:radial-gradient(circle, rgba(244,242,237,.045) 0%, transparent 62%);
+  transform:translate(-50%,-50%); mix-blend-mode:screen}
+@media (hover:none){#cursorGlow{display:none}}
 
-/* preloader */
-#pre{position:fixed; inset:0; z-index:100; background:var(--bg); display:flex; align-items:center; justify-content:center; transition:opacity .8s ease; }
+/* ── preloader ── */
+#pre{position:fixed; inset:0; z-index:100; background:var(--void); display:flex; align-items:center; justify-content:center; transition:opacity 1s ease}
 #pre.done{opacity:0; pointer-events:none}
-#pre .term{font-family:var(--mono); font-size:.78rem; color:var(--dim); letter-spacing:.08em; white-space:pre-line; text-align:left; min-height:4em}
-#pre .term .ok{color:var(--green)}
+#pre .dot{width:8px; height:8px; border-radius:50%; background:var(--ink); animation:preP 1s ease-in-out infinite}
+@keyframes preP{0%,100%{transform:scale(1); opacity:1}50%{transform:scale(2.1); opacity:.25}}
 
-/* status pill */
-#pill{position:fixed; top:14px; right:16px; z-index:75; font-family:var(--mono); font-size:.66rem; letter-spacing:.12em;
-  padding:7px 13px; border-radius:99px; border:1px solid var(--line); background:rgba(5,5,5,.8); backdrop-filter:blur(8px);
-  display:none; align-items:center; gap:7px; cursor:pointer}
-#pill .led{width:6px;height:6px;border-radius:50%}
-#pill.pending{display:flex; color:var(--amber)} #pill.pending .led{background:var(--amber); animation:blink 1.6s infinite}
-#pill.accepted{display:flex; color:var(--green)} #pill.accepted .led{background:var(--green)}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+/* ── layout base ── */
+section{position:relative; z-index:2; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 24px; text-align:center}
+.mono{font-family:var(--mono); letter-spacing:.32em; font-size:.68rem; color:var(--dim); text-transform:uppercase}
+.giant{font-family:var(--disp); font-weight:900; font-stretch:75%; text-transform:uppercase;
+  font-size:clamp(2.6rem,9vw,7.5rem); line-height:.95; letter-spacing:-.015em}
+.big{font-family:var(--disp); font-weight:700; font-stretch:75%; text-transform:uppercase;
+  font-size:clamp(1.9rem,5.6vw,4.4rem); line-height:1.02; letter-spacing:-.01em}
+.soft{color:var(--dim)}
+.blur-in{opacity:0; filter:blur(14px); transform:translateY(24px)}
 
-/* scenes */
-.scene{position:relative; min-height:100vh; display:flex; align-items:center; justify-content:center; overflow:hidden}
-.scene video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:brightness(.38) saturate(.85)}
-.scene .veil{position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 30%, rgba(5,5,5,.85) 100%)}
-.scene .inner{position:relative; z-index:2; max-width:60rem; padding:0 28px; text-align:center}
+/* ── hero ── */
+#hero .pulse{width:9px; height:9px; border-radius:50%; background:var(--ink); margin-bottom:44px; animation:hp 2.6s ease-in-out infinite}
+@keyframes hp{0%,100%{box-shadow:0 0 0 0 rgba(244,242,237,.35)}55%{box-shadow:0 0 0 16px rgba(244,242,237,0)}}
+#hero .mono{margin-bottom:34px}
+#hero .cue{position:absolute; bottom:46px; font-family:var(--mono); font-size:.6rem; letter-spacing:.34em; color:var(--faint); animation:cue 2.6s ease-in-out infinite}
+@keyframes cue{0%,100%{transform:translateY(0); opacity:.5}50%{transform:translateY(8px); opacity:1}}
 
-.overline{font-family:var(--mono); font-size:.7rem; letter-spacing:.34em; color:var(--dim); margin-bottom:30px}
-.overline .g{color:var(--green)}
-h1{font-family:var(--serif); font-weight:300; font-style:italic; font-size:clamp(2.4rem,6.5vw,5rem); line-height:1.08; letter-spacing:-.01em}
-.bigline{font-family:var(--serif); font-weight:300; font-style:italic; font-size:clamp(1.9rem,4.6vw,3.6rem); line-height:1.2}
-.bigline .w{display:inline-block; opacity:0; transform:translateY(26px)}
-.subline{font-family:var(--mono); font-size:.8rem; color:var(--dim); letter-spacing:.1em; margin-top:26px}
+/* ── capítulo pinneado ── */
+#chapter{height:340vh; display:block; padding:0}
+#chapter .stage{position:sticky; top:0; height:100vh; display:flex; align-items:center; justify-content:center; overflow:hidden}
+#chapter .line{position:absolute; padding:0 24px; opacity:0; filter:blur(12px); transform:scale(.96); will-change:opacity,filter,transform}
+#chapter .accent{display:block; margin-top:10px}
+#chapter .accent b{font-weight:900; color:var(--ink);
+  text-shadow:0 0 60px rgba(244,242,237,.35), 0 0 120px rgba(244,242,237,.15)}
 
-.ghost{display:inline-block; margin-top:44px; font-family:var(--mono); font-size:.76rem; letter-spacing:.24em; color:var(--ink);
-  border:1px solid rgba(237,235,230,.35); padding:16px 34px; border-radius:2px; text-decoration:none; position:relative; overflow:hidden;
-  transition:color .35s ease, border-color .35s}
-.ghost::before{content:""; position:absolute; inset:0; background:var(--ink); transform:scaleX(0); transform-origin:left; transition:transform .35s cubic-bezier(.7,0,.2,1); z-index:-1}
-.ghost:hover{color:#050505; border-color:var(--ink)} .ghost:hover::before{transform:scaleX(1)}
+/* ── expediente flotante ── */
+#hint{gap:60px}
+.dossier{position:relative; width:min(30rem,90vw); text-align:left; padding:34px 30px;
+  background:linear-gradient(160deg,#0B0B0A,#060606); border:1px solid var(--line); border-radius:14px;
+  transform-style:preserve-3d; will-change:transform; animation:floaty 7s ease-in-out infinite;
+  box-shadow:0 60px 120px rgba(0,0,0,.6)}
+@keyframes floaty{0%,100%{translate:0 0}50%{translate:0 -12px}}
+.dossier::after{content:""; position:absolute; inset:0; border-radius:14px; pointer-events:none;
+  background:radial-gradient(600px circle at var(--mx,50%) var(--my,0%), rgba(244,242,237,.05), transparent 45%)}
+.dossier .tag{font-family:var(--mono); font-size:.62rem; letter-spacing:.3em; color:var(--faint); margin-bottom:22px; display:flex; justify-content:space-between}
+.drow{display:flex; justify-content:space-between; align-items:center; padding:13px 0; border-bottom:1px solid var(--line);
+  font-family:var(--mono); font-size:.74rem; letter-spacing:.08em; color:var(--dim)}
+.drow:last-child{border-bottom:none}
+.redact{display:inline-block; width:110px; height:11px; background:#1E1D1B; border-radius:2px; position:relative; overflow:hidden}
+.redact::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(244,242,237,.07),transparent);
+  animation:red 2.8s ease-in-out infinite}
+@keyframes red{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}
+.drow .val{color:var(--ink); font-weight:500}
+.drow .val.g{color:var(--green); text-shadow:0 0 24px rgba(74,222,128,.4)}
+#hint .caption{max-width:34rem; font-size:1rem; line-height:1.9; color:var(--dim)}
+#hint .caption b{color:var(--ink); font-weight:500}
 
-.cue{position:absolute; bottom:74px; left:50%; transform:translateX(-50%); z-index:3; font-family:var(--mono); font-size:.62rem; letter-spacing:.3em; color:var(--faint); animation:cue 2.4s ease-in-out infinite}
-@keyframes cue{0%,100%{transform:translate(-50%,0); opacity:.6}50%{transform:translate(-50%,8px); opacity:1}}
+/* ── buscamos / exclusividad ── */
+#seek .rules{margin-top:54px; display:flex; flex-direction:column; gap:0; width:min(30rem,88vw)}
+#seek .rule{font-family:var(--mono); font-size:.7rem; letter-spacing:.26em; color:var(--dim);
+  padding:15px 0; border-bottom:1px solid var(--line); display:flex; justify-content:space-between}
+#seek .rule:first-child{border-top:1px solid var(--line)}
+#seek .rule i{font-style:normal; color:var(--faint)}
 
-/* dossier scene */
-.dossier{background:var(--bg)}
-.dossier .inner{text-align:left; max-width:44rem; width:100%}
-.dline{font-family:var(--mono); font-size:clamp(.82rem,1.7vw,1rem); letter-spacing:.06em; color:var(--dim); padding:13px 0; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:14px; opacity:0; transform:translateY(14px)}
-.dline b{color:var(--ink); font-weight:500}
-.dline .cls{color:var(--red); letter-spacing:.2em}
-.dclose{margin-top:52px; opacity:0; transform:translateY(20px)}
+/* ── pregunta + botón ── */
+#choose .giant{margin-bottom:60px}
+.access{position:relative; font-family:var(--mono); font-size:.78rem; letter-spacing:.3em; color:var(--void);
+  background:var(--ink); border:none; padding:22px 52px; border-radius:99px; cursor:pointer;
+  transition:transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .3s; will-change:transform}
+.access:hover{transform:scale(1.05); box-shadow:0 0 60px rgba(244,242,237,.25)}
+.access:active{transform:scale(.98)}
 
-/* application */
-#apply{background:var(--bg); border-top:1px solid var(--line)}
-.file{position:relative; z-index:2; width:min(34rem,92vw); border:1px solid var(--line); background:#0A0A09; padding:44px 38px; margin:0 auto}
-.file .corner{position:absolute; width:14px; height:14px; border-color:var(--faint); border-style:solid}
-.file .c1{top:-1px;left:-1px;border-width:1px 0 0 1px}.file .c2{top:-1px;right:-1px;border-width:1px 1px 0 0}
-.file .c3{bottom:-1px;left:-1px;border-width:0 0 1px 1px}.file .c4{bottom:-1px;right:-1px;border-width:0 1px 1px 0}
-.file h2{font-family:var(--mono); font-weight:600; font-size:.85rem; letter-spacing:.3em; color:var(--ink)}
-.file .meta{font-family:var(--mono); font-size:.68rem; color:var(--faint); letter-spacing:.12em; margin-top:10px; line-height:2}
-.file form{margin-top:30px; display:flex; flex-direction:column; gap:12px}
-.file input, .file textarea{background:transparent; border:1px solid var(--line); color:var(--ink); font-family:var(--mono); font-size:.9rem;
-  letter-spacing:.05em; padding:16px 16px; outline:none; border-radius:2px; transition:border-color .3s; resize:none}
-.file input::placeholder, .file textarea::placeholder{color:var(--faint)}
-.file input:focus, .file textarea:focus{border-color:var(--dim)}
-.file button{font-family:var(--mono); font-size:.76rem; letter-spacing:.26em; font-weight:600; color:#050505; background:var(--ink);
-  border:none; padding:17px; cursor:pointer; border-radius:2px; transition:background .3s, transform .15s}
-.file button:hover{background:#fff; transform:translateY(-1px)}
-.file button:disabled{opacity:.5; cursor:wait; transform:none}
-.file .note{font-family:var(--mono); font-size:.64rem; color:var(--faint); letter-spacing:.08em; margin-top:16px; line-height:1.9}
-.file .err{color:var(--red); font-family:var(--mono); font-size:.7rem; margin-top:10px; min-height:1em}
+/* ── aplicación multi-paso ── */
+#app-form{display:none}
+.formWrap{width:min(40rem,92vw); text-align:left}
+.progressLine{height:1px; background:var(--line); margin-bottom:64px; position:relative}
+.progressLine i{position:absolute; left:0; top:0; height:1px; background:var(--ink); width:0%; transition:width .6s cubic-bezier(.7,0,.2,1)}
+.step{display:none}
+.step.active{display:block; animation:stepIn .55s cubic-bezier(.2,.8,.2,1) both}
+@keyframes stepIn{from{opacity:0; transform:translateY(26px); filter:blur(8px)}to{opacity:1; transform:none; filter:none}}
+.step .idx{font-family:var(--mono); font-size:.64rem; letter-spacing:.3em; color:var(--faint); margin-bottom:18px}
+.step .q{font-family:var(--disp); font-weight:700; font-stretch:75%; text-transform:uppercase;
+  font-size:clamp(1.4rem,3.6vw,2.3rem); line-height:1.08; margin-bottom:34px}
+.step .hintTxt{font-size:.82rem; color:var(--faint); margin-top:-22px; margin-bottom:30px}
+.step input,.step textarea{width:100%; background:transparent; border:none; border-bottom:1px solid var(--faint);
+  color:var(--ink); font-family:var(--sans); font-size:1.25rem; padding:10px 2px 14px; outline:none; resize:none;
+  transition:border-color .3s; border-radius:0}
+.step input::placeholder,.step textarea::placeholder{color:#33312E}
+.step input:focus,.step textarea:focus{border-color:var(--ink)}
+.stepNav{display:flex; align-items:center; justify-content:space-between; margin-top:44px}
+.nextBtn{font-family:var(--mono); font-size:.7rem; letter-spacing:.28em; color:var(--void); background:var(--ink);
+  border:none; padding:16px 34px; border-radius:99px; cursor:pointer; transition:transform .2s, box-shadow .3s, opacity .2s}
+.nextBtn:hover{transform:scale(1.04); box-shadow:0 0 40px rgba(244,242,237,.2)}
+.nextBtn:disabled{opacity:.45; cursor:wait; transform:none; box-shadow:none}
+.backBtn{font-family:var(--mono); font-size:.66rem; letter-spacing:.2em; color:var(--faint); background:none; border:none; cursor:pointer; padding:10px}
+.backBtn:hover{color:var(--dim)}
+.enterHint{font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; color:var(--faint)}
+.formErr{font-family:var(--mono); font-size:.68rem; color:#F87171; margin-top:16px; min-height:1.2em}
 
-/* status panel */
-#status{display:none}
-#status .row{display:flex; justify-content:space-between; font-family:var(--mono); font-size:.74rem; letter-spacing:.1em; padding:13px 0; border-bottom:1px solid var(--line); color:var(--dim)}
-#status .row b{color:var(--ink); font-weight:500}
-#status .st-pending{color:var(--amber)}
-#status .scanline{height:1px; background:linear-gradient(90deg, transparent, var(--amber), transparent); margin-top:34px; animation:scan 2.8s ease-in-out infinite}
-@keyframes scan{0%,100%{opacity:.15}50%{opacity:.9}}
-#status .wait{font-family:var(--mono); font-size:.66rem; color:var(--faint); letter-spacing:.1em; margin-top:18px; line-height:2}
-
-/* accepted */
-#accepted{display:none; text-align:center}
-.stamp{display:inline-block; font-family:var(--mono); font-weight:600; font-size:.85rem; letter-spacing:.4em; color:var(--green);
-  border:2px solid var(--green); padding:16px 30px 16px 34px; border-radius:3px; transform:rotate(-4deg); opacity:0;
-  box-shadow:0 0 44px rgba(74,222,128,.15)}
-#accepted h3{font-family:var(--serif); font-style:italic; font-weight:300; font-size:clamp(2rem,5vw,3.2rem); margin-top:38px}
-#accepted .amsg{font-family:var(--mono); font-size:.74rem; color:var(--dim); letter-spacing:.12em; line-height:2.2; margin-top:24px}
+/* ── estado / aceptado ── */
+.filePanel{width:min(34rem,92vw); text-align:left}
+.filePanel h2{font-family:var(--mono); font-weight:500; font-size:.8rem; letter-spacing:.3em; color:var(--ink)}
+.srow{display:flex; justify-content:space-between; font-family:var(--mono); font-size:.72rem; letter-spacing:.1em; padding:14px 0; border-bottom:1px solid var(--line); color:var(--dim)}
+.srow b{color:var(--ink); font-weight:500}
+.st-pending{color:var(--amber)}
+.scanline{height:1px; background:linear-gradient(90deg,transparent,var(--amber),transparent); margin-top:38px; animation:scan 3s ease-in-out infinite}
+@keyframes scan{0%,100%{opacity:.12}50%{opacity:.85}}
+.waitTxt{font-family:var(--mono); font-size:.64rem; color:var(--faint); letter-spacing:.1em; margin-top:20px; line-height:2.1}
+#accepted{text-align:center}
+.stamp{display:inline-block; font-family:var(--mono); font-weight:500; font-size:.8rem; letter-spacing:.42em; color:var(--green);
+  border:2px solid var(--green); padding:16px 28px 16px 34px; border-radius:4px; transform:rotate(-4deg); opacity:0;
+  box-shadow:0 0 60px rgba(74,222,128,.18)}
+#accepted .big{margin-top:44px}
+#accepted .amsg{font-family:var(--mono); font-size:.7rem; color:var(--dim); letter-spacing:.14em; line-height:2.3; margin-top:26px}
 #accepted .amsg b{color:var(--ink)}
 
-footer{border-top:1px solid var(--line); padding:30px 28px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
-  font-family:var(--mono); font-size:.62rem; letter-spacing:.18em; color:var(--faint)}
+/* ── pill estado ── */
+#pill{position:fixed; top:16px; right:18px; z-index:70; font-family:var(--mono); font-size:.62rem; letter-spacing:.14em;
+  padding:8px 14px; border-radius:99px; border:1px solid var(--line); background:rgba(3,3,3,.75); backdrop-filter:blur(10px);
+  display:none; align-items:center; gap:8px; cursor:pointer}
+#pill .led{width:6px; height:6px; border-radius:50%}
+#pill.pending{display:flex; color:var(--amber)} #pill.pending .led{background:var(--amber); animation:blink 1.7s infinite}
+#pill.accepted{display:flex; color:var(--green)} #pill.accepted .led{background:var(--green)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+footer{position:relative; z-index:2; display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
+  padding:34px 28px; border-top:1px solid var(--line);
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.22em; color:var(--faint)}
+
+.reveal{opacity:0; transform:translateY(30px); filter:blur(10px)}
 
 @media (max-width:640px){
-  .bar{height:34px}
-  .file{padding:34px 22px}
-  .cue{bottom:52px}
+  #chapter{height:300vh}
+  .access{padding:19px 40px}
+  .dossier{padding:26px 20px}
 }
 @media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation:none!important; transition:none!important}
-  .bigline .w{opacity:1!important; transform:none!important}
-  .dline,.dclose{opacity:1!important; transform:none!important}
+  *{animation:none!important; transition:none!important}
+  .blur-in,.reveal,#chapter .line{opacity:1!important; filter:none!important; transform:none!important; position:static}
+  #chapter{height:auto; padding:80px 0}
+  #chapter .stage{position:static; height:auto; flex-direction:column; gap:60px}
 }
 </style>
 </head>
 <body>
 
+<div class="orb orb1"></div><div class="orb orb2"></div>
 <div class="grain"></div>
-<div class="bar top"></div>
-<div class="bar bottom"></div>
+<div id="cursorGlow"></div>
+<div id="pre"><div class="dot"></div></div>
 
-<div id="pre"><div class="term" id="term"></div></div>
-
-<div id="pill" onclick="document.getElementById('apply').scrollIntoView({behavior:'smooth'})">
+<div id="pill" onclick="document.getElementById('app-zone').scrollIntoView({behavior:'smooth'})">
   <span class="led"></span><span id="pillText"></span>
 </div>
 
-<!-- ═══ ESCENA 0 — HERO ═══ -->
-<section class="scene" id="hero">
-  <video autoplay muted loop playsinline preload="auto" src="videos/city.mp4"></video>
-  <div class="veil"></div>
-  <div class="inner">
-    <p class="overline">PROTOCOLO <span class="g">A1</span> — ACCESO ANTICIPADO</p>
-    <h1>No llegaste aquí<br>por casualidad.</h1>
-    <p class="subline">La aplicación de la que nadie te ha hablado todavía.</p>
-    <a class="ghost" href="#apply">SOLICITAR ACCESO</a>
-  </div>
+<!-- 01 · VOID -->
+<section id="hero">
+  <div class="pulse blur-in"></div>
+  <p class="mono blur-in">A1 — protocolo privado</p>
+  <h1 class="giant blur-in">El sistema<br>no fue construido<br><span class="soft">para todos.</span></h1>
   <div class="cue">DESLIZA</div>
 </section>
 
-<!-- ═══ ESCENA 1 — CUMBRE AL AMANECER ═══ -->
-<section class="scene" id="s1">
-  <video muted loop playsinline preload="metadata" src="videos/summit.mp4"></video>
-  <div class="veil"></div>
-  <div class="inner">
-    <p class="bigline" data-words>Hay personas que despiertan sabiendo exactamente qué hacer con su día.</p>
+<!-- 02 · CAPÍTULO (pinneado) -->
+<section id="chapter">
+  <div class="stage">
+    <h2 class="big line" data-step="0">Hay personas que despiertan<br>sabiendo exactamente<br>qué hacer.</h2>
+    <h2 class="big line" data-step="1"><span class="soft">No es suerte.</span><br>No es disciplina.</h2>
+    <h2 class="giant line" data-step="2"><span class="accent soft" style="font-size:.35em; letter-spacing:.3em">ES</span><b>INFORMACIÓN</b></h2>
   </div>
 </section>
 
-<!-- ═══ ESCENA 2 — SUCCESS WALK ═══ -->
-<section class="scene" id="s2">
-  <video muted loop playsinline preload="metadata" src="videos/suit.mp4"></video>
-  <div class="veil"></div>
-  <div class="inner">
-    <p class="bigline" data-words>No tienen más suerte que tú. Tienen más información.</p>
-    <p class="subline">Su cuerpo habla. Ellos escuchan.</p>
+<!-- 03 · LA PISTA -->
+<section id="hint">
+  <p class="mono reveal">fragmento recuperado</p>
+  <div class="dossier reveal" id="tiltCard">
+    <div class="tag"><span>EXPEDIENTE</span><span>[RESTRINGIDO]</span></div>
+    <div class="drow"><span>SUJETO</span><span class="redact"></span></div>
+    <div class="drow"><span>PROTOCOLO</span><span class="val">A1 — ACTIVO</span></div>
+    <div class="drow"><span>HALLAZGO</span><span class="val g">+38 MIN SUEÑO PROFUNDO</span></div>
+    <div class="drow"><span>CAUSA</span><span class="redact"></span></div>
+    <div class="drow"><span>FUENTE</span><span class="val">SU PROPIO CUERPO</span></div>
+  </div>
+  <p class="caption reveal">Una capa entre <b>tu cuerpo</b> y <b>tus decisiones</b>.<br>No podemos decir más aquí.</p>
+</section>
+
+<!-- 04 · BUSCAMOS -->
+<section id="seek">
+  <p class="mono reveal">fase actual</p>
+  <h2 class="giant reveal" style="margin-top:26px">Buscamos<br>a los primeros.</h2>
+  <p class="big soft reveal" style="margin-top:24px; font-size:clamp(1.1rem,2.6vw,1.8rem)">No usuarios. Fundadores.</p>
+  <div class="rules">
+    <div class="rule reveal"><span>ACCESO</span><i>POR OLEADAS</i></div>
+    <div class="rule reveal"><span>CUPO</span><i>LIMITADO</i></div>
+    <div class="rule reveal"><span>SOLICITUDES</span><i>NO TODAS ENTRAN</i></div>
+    <div class="rule reveal"><span>GARANTÍAS</span><i>NINGUNA</i></div>
   </div>
 </section>
 
-<!-- ═══ ESCENA 3 — DOSSIER ═══ -->
-<section class="scene dossier" id="s3">
-  <div class="inner">
-    <p class="overline" style="text-align:left; margin-bottom:40px">EXPEDIENTE — <span class="g">QUÉ HACE A1</span></p>
-    <div class="dline"><span>&gt; sueño</span><b>descifrado, fase por fase</b></div>
-    <div class="dline"><span>&gt; energía</span><b>medida cada mañana</b></div>
-    <div class="dline"><span>&gt; hábitos</span><b>correlacionados con tu cuerpo</b></div>
-    <div class="dline"><span>&gt; corazón</span><b>escuchado en tiempo real</b></div>
-    <div class="dline"><span>&gt; resultado</span><span class="cls">[SE REVELA AL ENTRAR]</span></div>
-    <p class="bigline dclose">Construimos el traductor entre tu cuerpo y tu vida.</p>
-  </div>
+<!-- 05 · LA PREGUNTA -->
+<section id="choose">
+  <h2 class="giant reveal">¿Por qué<br>deberíamos<br><span class="soft">elegirte?</span></h2>
+  <button class="access reveal" id="openApp">SOLICITAR ACCESO</button>
 </section>
 
-<!-- ═══ ESCENA 4 — SOLICITUD ═══ -->
-<section class="scene" id="apply">
-  <video muted loop playsinline preload="metadata" src="videos/boxer.mp4" style="filter:brightness(.16) saturate(.6)"></video>
-  <div class="veil"></div>
-  <div class="file">
-    <span class="corner c1"></span><span class="corner c2"></span><span class="corner c3"></span><span class="corner c4"></span>
+<!-- 06 · APLICACIÓN -->
+<section id="app-zone">
 
-    <div id="formBlock">
-      <h2>SOLICITUD DE ACCESO</h2>
-      <p class="meta">CUPO LIMITADO · ENTRADA POR OLEADAS<br>NO TODAS LAS SOLICITUDES ENTRAN EN LA PRIMERA</p>
-      <form id="applyForm">
-        <input type="text" required id="fName" placeholder="nombre completo" autocomplete="name" aria-label="Nombre completo">
-        <input type="email" required id="fMail" placeholder="correo" autocomplete="email" aria-label="Correo">
-        <input type="tel" id="fPhone" placeholder="whatsapp / teléfono (para avisarte si entras)" autocomplete="tel" aria-label="Teléfono">
-        <textarea id="fAnswer" rows="3" maxlength="280" placeholder="¿qué cambiarías de tu vida si tuvieras la información?" aria-label="Respuesta"></textarea>
-        <button type="submit">ENVIAR SOLICITUD</button>
-      </form>
-      <p class="err" id="formErr"></p>
-      <p class="note">Tus datos solo se usan para resolver tu solicitud y avisarte. Sin spam. Nada más.</p>
+  <div id="app-form" class="formWrap">
+    <div class="progressLine"><i id="progressFill"></i></div>
+
+    <div class="step" data-i="0">
+      <p class="idx">01 / 06</p>
+      <p class="q">¿Cómo te llamas?</p>
+      <input type="text" id="qName" placeholder="Nombre completo" autocomplete="name">
+    </div>
+    <div class="step" data-i="1">
+      <p class="idx">02 / 06</p>
+      <p class="q">¿Dónde te encontramos?</p>
+      <input type="email" id="qMail" placeholder="Correo" autocomplete="email">
+    </div>
+    <div class="step" data-i="2">
+      <p class="idx">03 / 06</p>
+      <p class="q">¿Un canal directo?</p>
+      <p class="hintTxt">WhatsApp o teléfono. Opcional — solo para avisarte si entras.</p>
+      <input type="tel" id="qPhone" placeholder="+52 ..." autocomplete="tel">
+    </div>
+    <div class="step" data-i="3">
+      <p class="idx">04 / 06</p>
+      <p class="q">¿Por qué quieres entrar?</p>
+      <textarea id="qReason" rows="3" maxlength="400" placeholder="Escribe con honestidad."></textarea>
+    </div>
+    <div class="step" data-i="4">
+      <p class="idx">05 / 06</p>
+      <p class="q">¿Qué harías con A1?</p>
+      <textarea id="qUse" rows="3" maxlength="400" placeholder="Sé específico."></textarea>
+    </div>
+    <div class="step" data-i="5">
+      <p class="idx">06 / 06</p>
+      <p class="q">¿Qué es lo más difícil que intentas mejorar en tu vida?</p>
+      <textarea id="qStruggle" rows="3" maxlength="400" placeholder="Esto pesa más que todo lo anterior."></textarea>
     </div>
 
-    <div id="status">
-      <h2>EXPEDIENTE <span id="stNum"></span></h2>
-      <div style="margin-top:26px">
-        <div class="row"><span>SOLICITANTE</span><b id="stName"></b></div>
-        <div class="row"><span>CONTACTO</span><b id="stMail"></b></div>
-        <div class="row"><span>RECIBIDA</span><b id="stTime"></b></div>
-        <div class="row"><span>ESTADO</span><b class="st-pending">EN REVISIÓN ●</b></div>
-      </div>
-      <div class="scanline"></div>
-      <p class="wait">Tu solicitud está en la cola de la próxima oleada.<br>La resolución puede tardar. Vuelve más tarde.</p>
+    <div class="stepNav">
+      <button class="backBtn" id="backBtn" style="visibility:hidden">← VOLVER</button>
+      <span class="enterHint">ENTER ↵</span>
+      <button class="nextBtn" id="nextBtn">CONTINUAR</button>
     </div>
+    <p class="formErr" id="formErr"></p>
+  </div>
 
-    <div id="accepted">
+  <div id="status" class="filePanel" style="display:none">
+    <h2>EXPEDIENTE <span id="stNum"></span></h2>
+    <div style="margin-top:28px">
+      <div class="srow"><span>SOLICITANTE</span><b id="stName"></b></div>
+      <div class="srow"><span>CONTACTO</span><b id="stMail"></b></div>
+      <div class="srow"><span>RECIBIDA</span><b id="stTime"></b></div>
+      <div class="srow"><span>ESTADO</span><b class="st-pending">EN REVISIÓN ●</b></div>
+    </div>
+    <div class="scanline"></div>
+    <p class="waitTxt">Tu solicitud entró en la cola de la próxima oleada.<br>La resolución puede tardar. Vuelve más tarde.</p>
+  </div>
+
+  <div id="accepted" class="filePanel" style="display:none">
+    <div style="text-align:center">
       <span class="stamp" id="stamp">ACCESO CONCEDIDO</span>
-      <h3>Bienvenido dentro.</h3>
+      <h3 class="big">Bienvenido<br>dentro.</h3>
       <p class="amsg">EXPEDIENTE <b id="acNum"></b> — APROBADO<br>
-      Estás en la lista del día uno.<br>
-      Te escribiremos a <b id="acMail"></b> antes del lanzamiento.</p>
+        Quedas registrado para el día uno.<br>
+        Te escribiremos a <b id="acMail"></b>.</p>
     </div>
-
   </div>
+
 </section>
 
 <footer>
-  <span>© 2026 · PROTOCOLO A1</span>
-  <span>TODA TU VIDA. UNA SOLA APP.</span>
+  <span>© 2026 · A1</span>
+  <span>NO ES PARA TODOS.</span>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script>
-// ═══ Config ══════════════════════════════════════
 const SUPABASE_URL = 'https://glqlyizfvuainaewqlad.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_TrfOjokY3fkoMbuFMmWbpA_dj3WXuxx' // anon key (pública)
-const REVIEW_MS = 60 * 60 * 1000  // 1 hora de "revisión"
-const LS_KEY = 'a1_expediente_v1'
-
-// ═══ Preloader ═══════════════════════════════════
-const LINES = ['> estableciendo conexión segura', '> verificando origen', '> canal abierto  [OK]']
-const term = document.getElementById('term')
-let li = 0
-function typeLine(){
-  if(li >= LINES.length){
-    setTimeout(()=>{
-      document.getElementById('pre').classList.add('done')
-      heroIn()
-    }, 350)
-    return
-  }
-  const line = LINES[li]
-  let ci = 0
-  const iv = setInterval(()=>{
-    term.innerHTML = LINES.slice(0,li).join('\n') + '\n' + line.slice(0,++ci)
-    if(ci >= line.length){ clearInterval(iv); li++; setTimeout(typeLine, 140) }
-  }, 14)
-}
-typeLine()
-
-// ═══ GSAP scenes ═════════════════════════════════
-gsap.registerPlugin(ScrollTrigger)
+const REVIEW_MS = 60 * 60 * 1000
+const LS_KEY = 'a1_expediente_v2'
+const $ = id => document.getElementById(id)
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
 
-function heroIn(){
-  if(reduced) return
-  gsap.from('#hero .overline', {y:18, opacity:0, duration:.9, ease:'power3.out'})
-  gsap.from('#hero h1',        {y:34, opacity:0, duration:1.2, delay:.15, ease:'power3.out'})
-  gsap.from('#hero .subline',  {y:16, opacity:0, duration:.9, delay:.45, ease:'power3.out'})
-  gsap.from('#hero .ghost',    {y:14, opacity:0, duration:.9, delay:.65, ease:'power3.out'})
-}
+gsap.registerPlugin(ScrollTrigger)
 
-// dividir frases en palabras para reveals cinemáticos
-document.querySelectorAll('[data-words]').forEach(p=>{
-  p.innerHTML = p.textContent.trim().split(' ').map(w=>`<span class="w">${w}</span>`).join(' ')
+// ═══ preloader → hero ═══════════════════════════
+addEventListener('load', () => {
+  setTimeout(() => {
+    $('pre').classList.add('done')
+    if (!reduced) gsap.to('#hero .blur-in', {
+      opacity:1, filter:'blur(0px)', y:0, duration:1.3, stagger:.22, ease:'power3.out',
+    })
+    else document.querySelectorAll('.blur-in').forEach(e => e.style.cssText='opacity:1;filter:none;transform:none')
+  }, 800)
 })
 
-if(!reduced){
-  // palabras que entran una a una al hacer scroll (estilo keynote)
-  document.querySelectorAll('.scene').forEach(scene=>{
-    const words = scene.querySelectorAll('.w')
-    if(words.length){
-      gsap.to(words, {
-        opacity:1, y:0, stagger:.06, duration:.7, ease:'power3.out',
-        scrollTrigger:{ trigger:scene, start:'top 62%' }
-      })
-      const sub = scene.querySelector('.subline')
-      if(sub) gsap.from(sub, {opacity:0, y:14, duration:.8, delay:.5,
-        scrollTrigger:{ trigger:scene, start:'top 55%' }})
-    }
-    // zoom sutil del vídeo con el scroll
-    const vid = scene.querySelector('video')
-    if(vid) gsap.fromTo(vid, {scale:1.12}, {scale:1, ease:'none',
-      scrollTrigger:{ trigger:scene, start:'top bottom', end:'bottom top', scrub:true }})
-  })
-
-  // dossier: líneas de expediente una a una
-  gsap.to('.dline', {opacity:1, y:0, stagger:.14, duration:.6, ease:'power2.out',
-    scrollTrigger:{ trigger:'#s3', start:'top 58%' }})
-  gsap.to('.dclose', {opacity:1, y:0, duration:.9, delay:.2, ease:'power3.out',
-    scrollTrigger:{ trigger:'.dclose', start:'top 80%' }})
-
-  // ficha de solicitud
-  gsap.from('.file', {opacity:0, y:44, duration:1, ease:'power3.out',
-    scrollTrigger:{ trigger:'#apply', start:'top 65%' }})
+// ═══ cursor glow (lerp suave, un solo rAF) ═══════
+if (matchMedia('(hover:hover)').matches && !reduced) {
+  const glow = $('cursorGlow')
+  let mx = innerWidth/2, my = innerHeight/2, gx = mx, gy = my
+  addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY }, {passive:true})
+  ;(function loop(){
+    gx += (mx-gx)*.08; gy += (my-gy)*.08
+    glow.style.transform = `translate(${gx-260}px,${gy-260}px)`
+    requestAnimationFrame(loop)
+  })()
 }
 
-// vídeos: reproducir solo la escena visible (batería/movil)
-const vids = document.querySelectorAll('.scene video')
-const vio = new IntersectionObserver(es=>{
-  es.forEach(e=>{ const v=e.target; if(e.isIntersecting){ v.play().catch(()=>{}) } else v.pause() })
-},{threshold:.15})
-vids.forEach(v=>vio.observe(v))
+// ═══ capítulo pinneado: 3 frases con scrub ═══════
+if (!reduced) {
+  const lines = gsap.utils.toArray('#chapter .line')
+  const tl = gsap.timeline({
+    scrollTrigger:{ trigger:'#chapter', start:'top top', end:'bottom bottom', scrub:.6 }
+  })
+  lines.forEach((ln,i) => {
+    tl.to(ln, {opacity:1, filter:'blur(0px)', scale:1, duration:1, ease:'power2.out'})
+    if (i < lines.length-1) tl.to(ln, {opacity:0, filter:'blur(10px)', scale:1.05, duration:1, ease:'power2.in'}, '+=0.7')
+    else tl.to(ln, {duration:.8})
+  })
 
-// ═══ Expediente / estado ═════════════════════════
-const $ = id=>document.getElementById(id)
+  // reveals genéricos
+  gsap.utils.toArray('.reveal').forEach(el => {
+    gsap.to(el, {
+      opacity:1, y:0, filter:'blur(0px)', duration:1.1, ease:'power3.out',
+      scrollTrigger:{ trigger:el, start:'top 78%' }
+    })
+  })
 
+  // parallax sutil de los orbes con el scroll
+  gsap.to('.orb1', {yPercent:18, ease:'none', scrollTrigger:{trigger:document.body, start:'top top', end:'max', scrub:1.5}})
+  gsap.to('.orb2', {yPercent:-14, ease:'none', scrollTrigger:{trigger:document.body, start:'top top', end:'max', scrub:1.5}})
+} else {
+  document.querySelectorAll('.reveal').forEach(e => e.style.cssText='opacity:1;filter:none;transform:none')
+}
+
+// ═══ tilt 3D del expediente ══════════════════════
+const card = $('tiltCard')
+if (matchMedia('(hover:hover)').matches && !reduced) {
+  card.addEventListener('pointermove', e => {
+    const r = card.getBoundingClientRect()
+    const px = (e.clientX-r.left)/r.width, py = (e.clientY-r.top)/r.height
+    card.style.setProperty('--mx', `${px*100}%`)
+    card.style.setProperty('--my', `${py*100}%`)
+    gsap.to(card, {rotateY:(px-.5)*14, rotateX:(0.5-py)*10, duration:.5, ease:'power2.out', transformPerspective:700})
+  })
+  card.addEventListener('pointerleave', () => gsap.to(card, {rotateX:0, rotateY:0, duration:.9, ease:'elastic.out(1,.5)'}))
+}
+
+// ═══ aplicación multi-paso ═══════════════════════
+const steps = gsap.utils.toArray('.step')
+const FIELDS = ['qName','qMail','qPhone','qReason','qUse','qStruggle']
+let cur = 0
+
+function showStep(i){
+  cur = i
+  steps.forEach((s,k) => s.classList.toggle('active', k===i))
+  $('progressFill').style.width = `${(i/(steps.length))*100+8}%`
+  $('backBtn').style.visibility = i===0 ? 'hidden' : 'visible'
+  $('nextBtn').textContent = i===steps.length-1 ? 'ENVIAR SOLICITUD' : 'CONTINUAR'
+  $('formErr').textContent = ''
+  setTimeout(() => $(FIELDS[i])?.focus({preventScroll:true}), 380)
+}
+
+function valid(i){
+  const v = $(FIELDS[i]).value.trim()
+  if (i===0) return v.length >= 2 || 'escribe tu nombre.'
+  if (i===1) return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v) || 'ese correo no parece válido.'
+  if (i===2) return true                      // teléfono opcional
+  return v.length >= 4 || 'necesitamos una respuesta real.'
+}
+
+async function advance(){
+  const ok = valid(cur)
+  if (ok !== true){ $('formErr').textContent = '> ' + ok; return }
+  if (cur < steps.length-1){ showStep(cur+1); return }
+  await submit()
+}
+
+$('openApp').addEventListener('click', () => {
+  $('app-form').style.display = 'block'
+  $('app-zone').scrollIntoView({behavior:'smooth'})
+  showStep(0)
+})
+$('nextBtn').addEventListener('click', advance)
+$('backBtn').addEventListener('click', () => cur>0 && showStep(cur-1))
+document.addEventListener('keydown', e => {
+  if (e.key==='Enter' && !e.shiftKey && $('app-form').style.display==='block' && $('status').style.display==='none'){
+    const el = document.activeElement
+    if (el && FIELDS.includes(el.id)){ e.preventDefault(); advance() }
+  }
+})
+
+async function submit(){
+  const btn = $('nextBtn')
+  btn.disabled = true
+  const body = {
+    name:     $('qName').value.trim(),
+    email:    $('qMail').value.trim().toLowerCase(),
+    phone:    $('qPhone').value.trim() || null,
+    reason:   $('qReason').value.trim() || null,
+    use_case: $('qUse').value.trim() || null,
+    struggle: $('qStruggle').value.trim() || null,
+    source:   'landing-v4',
+  }
+  try{
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_KEY,
+        'Authorization':`Bearer ${SUPABASE_KEY}`, 'Prefer':'return=minimal' },
+      body: JSON.stringify(body),
+    })
+    if (r.ok || r.status===409){
+      saveState({ email: body.email, name: body.name, appliedAt: Date.now() })
+      render(true)
+    } else throw new Error('status '+r.status)
+  }catch(_){
+    $('formErr').textContent = '> error de transmisión. reintenta.'
+  }finally{ btn.disabled = false }
+}
+
+// ═══ expediente / estado ═════════════════════════
 function fileNumber(email){
   let h = 0
-  for(const c of email) h = (h*31 + c.charCodeAt(0)) >>> 0
+  for (const c of email) h = (h*31 + c.charCodeAt(0)) >>> 0
   return 'A1-' + String(1000 + (h % 9000))
 }
 function loadState(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)) }catch(_){ return null } }
 function saveState(s){ localStorage.setItem(LS_KEY, JSON.stringify(s)) }
 
-function render(){
+function render(scroll=false){
   const st = loadState()
-  const pill = $('pill')
-  if(!st){ pill.className=''; return }
+  if (!st){ $('pill').className=''; return }
   const num = fileNumber(st.email)
   const accepted = Date.now() - st.appliedAt >= REVIEW_MS
-  $('formBlock').style.display = 'none'
-  if(accepted){
+  $('app-form').style.display = 'none'
+  $('openApp').style.display = 'none'
+  if (accepted){
     $('status').style.display = 'none'
     $('accepted').style.display = 'block'
     $('acNum').textContent = num
     $('acMail').textContent = st.email
-    pill.className = 'accepted'; $('pillText').textContent = 'EXPEDIENTE: APROBADO'
-    if(!reduced && !st.stamped){
-      gsap.fromTo('#stamp', {opacity:0, scale:2.2, rotate:-14}, {opacity:1, scale:1, rotate:-4, duration:.55, ease:'power4.in',
-        onComplete(){ gsap.fromTo('.file',{boxShadow:'0 0 0 rgba(74,222,128,0)'},{boxShadow:'0 0 90px rgba(74,222,128,.18)', duration:.9}) }})
+    $('pill').className='accepted'; $('pillText').textContent='EXPEDIENTE: APROBADO'
+    if (!reduced && !st.stamped){
+      gsap.fromTo('#stamp', {opacity:0, scale:2.4, rotate:-16}, {opacity:1, scale:1, rotate:-4, duration:.5, ease:'power4.in'})
       st.stamped = true; saveState(st)
-    } else {
-      gsap.set('#stamp', {opacity:1})
-    }
+    } else gsap.set('#stamp',{opacity:1})
   } else {
     $('accepted').style.display = 'none'
     $('status').style.display = 'block'
@@ -358,39 +495,13 @@ function render(){
     $('stName').textContent = st.name || '—'
     $('stMail').textContent = st.email
     $('stTime').textContent = new Date(st.appliedAt).toLocaleString()
-    pill.className = 'pending'; $('pillText').textContent = 'EN REVISIÓN'
+    $('pill').className='pending'; $('pillText').textContent='EN REVISIÓN'
   }
+  if (scroll) $('app-zone').scrollIntoView({behavior:'smooth'})
 }
 
-$('applyForm').addEventListener('submit', async ev=>{
-  ev.preventDefault()
-  const btn = ev.target.querySelector('button')
-  const name   = $('fName').value.trim()
-  const email  = $('fMail').value.trim().toLowerCase()
-  const phone  = $('fPhone').value.trim()
-  const answer = $('fAnswer').value.trim()
-  if(!email || !name) return
-  btn.disabled = true
-  $('formErr').textContent = ''
-  try{
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`,{
-      method:'POST',
-      headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_KEY,
-        'Authorization':`Bearer ${SUPABASE_KEY}`, 'Prefer':'return=minimal' },
-      body: JSON.stringify({ email, name, phone: phone || null, answer: answer || null, source:'landing-v2' }),
-    })
-    if(r.ok || r.status === 409){
-      saveState({ email, name, appliedAt: Date.now() })
-      render()
-      $('apply').scrollIntoView({behavior:'smooth'})
-    } else throw new Error('status '+r.status)
-  }catch(_){
-    $('formErr').textContent = '> error de transmisión. reintenta.'
-  }finally{ btn.disabled = false }
-})
-
 render()
-setInterval(render, 30_000)  // si la hora se cumple con la página abierta, transiciona solo
+setInterval(render, 30_000)
 </script>
 </body>
 </html>
