@@ -86,10 +86,10 @@ h1{font-family:var(--serif); font-weight:300; font-style:italic; font-size:clamp
 .file h2{font-family:var(--mono); font-weight:600; font-size:.85rem; letter-spacing:.3em; color:var(--ink)}
 .file .meta{font-family:var(--mono); font-size:.68rem; color:var(--faint); letter-spacing:.12em; margin-top:10px; line-height:2}
 .file form{margin-top:30px; display:flex; flex-direction:column; gap:12px}
-.file input{background:transparent; border:1px solid var(--line); color:var(--ink); font-family:var(--mono); font-size:.9rem;
-  letter-spacing:.05em; padding:16px 16px; outline:none; border-radius:2px; transition:border-color .3s}
-.file input::placeholder{color:var(--faint)}
-.file input:focus{border-color:var(--dim)}
+.file input, .file textarea{background:transparent; border:1px solid var(--line); color:var(--ink); font-family:var(--mono); font-size:.9rem;
+  letter-spacing:.05em; padding:16px 16px; outline:none; border-radius:2px; transition:border-color .3s; resize:none}
+.file input::placeholder, .file textarea::placeholder{color:var(--faint)}
+.file input:focus, .file textarea:focus{border-color:var(--dim)}
 .file button{font-family:var(--mono); font-size:.76rem; letter-spacing:.26em; font-weight:600; color:#050505; background:var(--ink);
   border:none; padding:17px; cursor:pointer; border-radius:2px; transition:background .3s, transform .15s}
 .file button:hover{background:#fff; transform:translateY(-1px)}
@@ -155,18 +155,18 @@ footer{border-top:1px solid var(--line); padding:30px 28px; display:flex; justif
   <div class="cue">DESLIZA</div>
 </section>
 
-<!-- ═══ ESCENA 1 — RUNNER ═══ -->
+<!-- ═══ ESCENA 1 — CUMBRE AL AMANECER ═══ -->
 <section class="scene" id="s1">
-  <video muted loop playsinline preload="metadata" src="videos/runner.mp4"></video>
+  <video muted loop playsinline preload="metadata" src="videos/summit.mp4"></video>
   <div class="veil"></div>
   <div class="inner">
     <p class="bigline" data-words>Hay personas que despiertan sabiendo exactamente qué hacer con su día.</p>
   </div>
 </section>
 
-<!-- ═══ ESCENA 2 — BOXER ═══ -->
+<!-- ═══ ESCENA 2 — SUCCESS WALK ═══ -->
 <section class="scene" id="s2">
-  <video muted loop playsinline preload="metadata" src="videos/boxer.mp4"></video>
+  <video muted loop playsinline preload="metadata" src="videos/suit.mp4"></video>
   <div class="veil"></div>
   <div class="inner">
     <p class="bigline" data-words>No tienen más suerte que tú. Tienen más información.</p>
@@ -189,6 +189,8 @@ footer{border-top:1px solid var(--line); padding:30px 28px; display:flex; justif
 
 <!-- ═══ ESCENA 4 — SOLICITUD ═══ -->
 <section class="scene" id="apply">
+  <video muted loop playsinline preload="metadata" src="videos/boxer.mp4" style="filter:brightness(.16) saturate(.6)"></video>
+  <div class="veil"></div>
   <div class="file">
     <span class="corner c1"></span><span class="corner c2"></span><span class="corner c3"></span><span class="corner c4"></span>
 
@@ -196,17 +198,21 @@ footer{border-top:1px solid var(--line); padding:30px 28px; display:flex; justif
       <h2>SOLICITUD DE ACCESO</h2>
       <p class="meta">CUPO LIMITADO · ENTRADA POR OLEADAS<br>NO TODAS LAS SOLICITUDES ENTRAN EN LA PRIMERA</p>
       <form id="applyForm">
-        <input type="email" required placeholder="tu@email.com" autocomplete="email" aria-label="Tu email">
+        <input type="text" required id="fName" placeholder="nombre completo" autocomplete="name" aria-label="Nombre completo">
+        <input type="email" required id="fMail" placeholder="correo" autocomplete="email" aria-label="Correo">
+        <input type="tel" id="fPhone" placeholder="whatsapp / teléfono (para avisarte si entras)" autocomplete="tel" aria-label="Teléfono">
+        <textarea id="fAnswer" rows="3" maxlength="280" placeholder="¿qué cambiarías de tu vida si tuvieras la información?" aria-label="Respuesta"></textarea>
         <button type="submit">ENVIAR SOLICITUD</button>
       </form>
       <p class="err" id="formErr"></p>
-      <p class="note">Sin spam. Tu solicitud queda registrada y recibirás la resolución. Nada más.</p>
+      <p class="note">Tus datos solo se usan para resolver tu solicitud y avisarte. Sin spam. Nada más.</p>
     </div>
 
     <div id="status">
       <h2>EXPEDIENTE <span id="stNum"></span></h2>
       <div style="margin-top:26px">
-        <div class="row"><span>SOLICITANTE</span><b id="stMail"></b></div>
+        <div class="row"><span>SOLICITANTE</span><b id="stName"></b></div>
+        <div class="row"><span>CONTACTO</span><b id="stMail"></b></div>
         <div class="row"><span>RECIBIDA</span><b id="stTime"></b></div>
         <div class="row"><span>ESTADO</span><b class="st-pending">EN REVISIÓN ●</b></div>
       </div>
@@ -349,6 +355,7 @@ function render(){
     $('accepted').style.display = 'none'
     $('status').style.display = 'block'
     $('stNum').textContent = num
+    $('stName').textContent = st.name || '—'
     $('stMail').textContent = st.email
     $('stTime').textContent = new Date(st.appliedAt).toLocaleString()
     pill.className = 'pending'; $('pillText').textContent = 'EN REVISIÓN'
@@ -358,8 +365,11 @@ function render(){
 $('applyForm').addEventListener('submit', async ev=>{
   ev.preventDefault()
   const btn = ev.target.querySelector('button')
-  const email = ev.target.querySelector('input').value.trim().toLowerCase()
-  if(!email) return
+  const name   = $('fName').value.trim()
+  const email  = $('fMail').value.trim().toLowerCase()
+  const phone  = $('fPhone').value.trim()
+  const answer = $('fAnswer').value.trim()
+  if(!email || !name) return
   btn.disabled = true
   $('formErr').textContent = ''
   try{
@@ -367,10 +377,10 @@ $('applyForm').addEventListener('submit', async ev=>{
       method:'POST',
       headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_KEY,
         'Authorization':`Bearer ${SUPABASE_KEY}`, 'Prefer':'return=minimal' },
-      body: JSON.stringify({ email, source:'landing-v2' }),
+      body: JSON.stringify({ email, name, phone: phone || null, answer: answer || null, source:'landing-v2' }),
     })
     if(r.ok || r.status === 409){
-      saveState({ email, appliedAt: Date.now() })
+      saveState({ email, name, appliedAt: Date.now() })
       render()
       $('apply').scrollIntoView({behavior:'smooth'})
     } else throw new Error('status '+r.status)
