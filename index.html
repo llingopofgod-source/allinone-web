@@ -23,9 +23,9 @@ body{background:var(--void); color:var(--ink); font-family:var(--sans); overflow
 ::selection{background:var(--ink); color:var(--void)}
 
 /* ── atmósfera: orbes lentísimos + grano ── */
-.orb{position:fixed; border-radius:50%; filter:blur(110px); pointer-events:none; z-index:0; will-change:transform}
-.orb1{width:52vw; height:52vw; left:-18vw; top:-12vw; background:radial-gradient(circle,#101418 0%,transparent 68%); animation:drift1 46s ease-in-out infinite alternate}
-.orb2{width:44vw; height:44vw; right:-16vw; bottom:-14vw; background:radial-gradient(circle,#14100E 0%,transparent 68%); animation:drift2 58s ease-in-out infinite alternate}
+.orb{position:fixed; border-radius:50%; pointer-events:none; z-index:0; will-change:transform}
+.orb1{width:64vw; height:64vw; left:-22vw; top:-16vw; background:radial-gradient(circle,#0E1216 0%,rgba(14,18,22,.4) 38%,transparent 66%); animation:drift1 46s ease-in-out infinite alternate}
+.orb2{width:56vw; height:56vw; right:-20vw; bottom:-18vw; background:radial-gradient(circle,#120F0D 0%,rgba(18,15,13,.4) 38%,transparent 66%); animation:drift2 58s ease-in-out infinite alternate}
 @keyframes drift1{to{transform:translate3d(9vw,7vh,0) scale(1.15)}}
 @keyframes drift2{to{transform:translate3d(-8vw,-9vh,0) scale(1.1)}}
 .grain{position:fixed; inset:-100px; z-index:60; pointer-events:none; opacity:.05;
