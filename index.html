@@ -34,9 +34,9 @@ body{background:var(--void); color:var(--ink); font-family:var(--sans); overflow
 @keyframes grain{0%,100%{transform:translate(0,0)}25%{transform:translate(-28px,18px)}50%{transform:translate(22px,-26px)}75%{transform:translate(-18px,-16px)}}
 
 /* ── glow que sigue al cursor ── */
-#cursorGlow{position:fixed; width:520px; height:520px; border-radius:50%; pointer-events:none; z-index:1;
-  background:radial-gradient(circle, rgba(244,242,237,.045) 0%, transparent 62%);
-  transform:translate(-50%,-50%); mix-blend-mode:screen}
+#cursorGlow{position:fixed; left:0; top:0; width:520px; height:520px; border-radius:50%; pointer-events:none; z-index:1;
+  background:radial-gradient(circle, rgba(244,242,237,.05) 0%, transparent 62%);
+  will-change:transform}
 @media (hover:none){#cursorGlow{display:none}}
 
 /* ── preloader ── */
