@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AllInOne — Toda tu vida. Una sola app.</title>
+<meta name="description" content="Hábitos, sueño, corazón, entrenos y energía — todo en una app que se conecta con tu reloj. Únete a la lista de espera y sé fundador.">
+<meta property="og:title" content="AllInOne — Toda tu vida. Una sola app.">
+<meta property="og:description" content="La app diaria de vida. Gamifica tus hábitos, entiende tu cuerpo y mejora cada área de tu vida.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23080808'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>A1</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808; --bg2:#101010; --card:#141414; --line:#232323;
+  --fg:#F9F9F9; --muted:#969696; --dim:#6B6B6B;
+  --red:#F87171; --orange:#FB923C; --yellow:#FBBF24; --green:#4ADE80;
+  --teal:#2DD4BF; --blue:#60A5FA; --purple:#A78BFA; --pink:#F472B6;
+  --spectrum:linear-gradient(90deg,var(--red),var(--orange),var(--yellow),var(--green),var(--teal),var(--blue),var(--purple),var(--pink));
+  --display:'Syne',sans-serif; --body:'Instrument Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--body);
+  overflow-x:hidden; -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--green); color:#04140a}
+
+/* grain */
+body::after{
+  content:""; position:fixed; inset:0; z-index:999; pointer-events:none; opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.wrap{max-width:1120px; margin:0 auto; padding:0 24px}
+
+/* ── Nav ─────────────────────────────────────── */
+nav{
+  position:fixed; top:0; left:0; right:0; z-index:50;
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  background:rgba(8,8,8,.72); border-bottom:1px solid rgba(255,255,255,.06);
+}
+nav .wrap{display:flex; align-items:center; justify-content:space-between; height:62px}
+.logo{font-family:var(--display); font-weight:800; font-size:1.15rem; letter-spacing:-.02em; text-decoration:none; color:var(--fg)}
+.logo em{font-style:normal; background:var(--spectrum); -webkit-background-clip:text; background-clip:text; color:transparent}
+.nav-cta{
+  font-family:var(--body); font-weight:600; font-size:.85rem; color:#04140a;
+  background:var(--green); border:none; border-radius:99px; padding:9px 18px;
+  cursor:pointer; text-decoration:none; transition:transform .15s ease, box-shadow .15s ease;
+}
+.nav-cta:hover{transform:translateY(-1px); box-shadow:0 6px 24px rgba(74,222,128,.35)}
+
+/* ── Hero ────────────────────────────────────── */
+header{position:relative; padding:150px 0 40px; min-height:92vh; display:flex; align-items:center}
+.hero-glow{
+  position:absolute; width:820px; height:820px; border-radius:50%;
+  top:-320px; right:-260px; pointer-events:none; filter:blur(20px);
+  background:radial-gradient(circle at center, rgba(74,222,128,.14), rgba(96,165,250,.07) 45%, transparent 70%);
+}
+.hero-glow2{
+  position:absolute; width:560px; height:560px; border-radius:50%;
+  bottom:-220px; left:-200px; pointer-events:none;
+  background:radial-gradient(circle at center, rgba(167,139,250,.10), transparent 65%);
+}
+.hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:48px; align-items:center; position:relative}
+.badge{
+  display:inline-flex; align-items:center; gap:8px; font-size:.8rem; font-weight:600;
+  color:var(--green); border:1px solid rgba(74,222,128,.35); background:rgba(74,222,128,.07);
+  padding:7px 14px; border-radius:99px; margin-bottom:26px;
+}
+.badge .dot{width:7px; height:7px; border-radius:50%; background:var(--green); animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.5)} 60%{box-shadow:0 0 0 8px rgba(74,222,128,0)}}
+h1{
+  font-family:var(--display); font-weight:800; letter-spacing:-.03em;
+  font-size:clamp(2.6rem,6vw,4.6rem); line-height:1.02;
+}
+h1 .spec{background:var(--spectrum); -webkit-background-clip:text; background-clip:text; color:transparent}
+.hero-sub{margin-top:22px; font-size:1.13rem; line-height:1.65; color:var(--muted); max-width:33rem}
+.hero-sub strong{color:var(--fg); font-weight:600}
+
+/* waitlist form */
+.wl-form{margin-top:34px; display:flex; gap:10px; max-width:31rem}
+.wl-form input{
+  flex:1; min-width:0; background:var(--card); border:1px solid var(--line); color:var(--fg);
+  font-family:var(--body); font-size:1rem; padding:15px 18px; border-radius:14px; outline:none;
+  transition:border-color .2s;
+}
+.wl-form input::placeholder{color:var(--dim)}
+.wl-form input:focus{border-color:var(--green)}
+.wl-form button{
+  font-family:var(--body); font-weight:700; font-size:.98rem; color:#04140a;
+  background:var(--green); border:none; border-radius:14px; padding:15px 24px; cursor:pointer;
+  white-space:nowrap; transition:transform .15s, box-shadow .15s;
+}
+.wl-form button:hover{transform:translateY(-2px); box-shadow:0 10px 32px rgba(74,222,128,.35)}
+.wl-form button:disabled{opacity:.6; cursor:wait; transform:none; box-shadow:none}
+.wl-msg{margin-top:12px; font-size:.9rem; min-height:1.3em}
+.wl-msg.ok{color:var(--green)} .wl-msg.err{color:var(--red)}
+.wl-note{margin-top:10px; font-size:.78rem; color:var(--dim)}
+
+/* phone mock */
+.phone-col{display:flex; justify-content:center; perspective:1200px}
+.phone{
+  width:290px; border-radius:44px; background:#0d0d0d; border:1px solid #262626;
+  box-shadow:0 40px 90px rgba(0,0,0,.7), 0 0 0 8px #060606, 0 0 90px rgba(96,165,250,.08);
+  padding:14px 12px 18px; transform:rotateY(-9deg) rotateX(4deg) rotate(2deg);
+  transition:transform .5s ease;
+}
+.phone:hover{transform:rotateY(-3deg) rotateX(1deg) rotate(.5deg)}
+.notch{width:96px; height:24px; background:#060606; border-radius:99px; margin:0 auto 14px}
+.ph-hello{font-size:.72rem; color:var(--dim); padding:0 8px}
+.ph-name{font-family:var(--display); font-weight:700; font-size:1.05rem; padding:2px 8px 12px}
+.ring-row{display:flex; align-items:center; gap:14px; background:#121212; border:1px solid #1f1f1f; border-radius:18px; padding:14px; margin:0 4px 10px}
+.ring{position:relative; width:64px; height:64px; flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .num{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1rem}
+.ring-label{font-size:.72rem; color:var(--muted); line-height:1.5}
+.ring-label b{display:block; color:var(--fg); font-size:.85rem}
+.habit-row{
+  display:flex; align-items:center; gap:10px; background:#121212; border:1px solid #1f1f1f;
+  border-radius:14px; padding:11px 12px; margin:0 4px 8px; font-size:.8rem;
+}
+.habit-dot{width:26px; height:26px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:.75rem; flex:none}
+.habit-name{flex:1; font-weight:500}
+.habit-xp{font-size:.68rem; font-weight:700; padding:3px 8px; border-radius:99px}
+.chip{
+  position:absolute; font-size:.7rem; font-weight:700; padding:7px 12px; border-radius:99px;
+  backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,.12); background:rgba(20,20,20,.85);
+  animation:floaty 4.5s ease-in-out infinite;
+}
+@keyframes floaty{0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)}}
+
+/* ── Ticker ──────────────────────────────────── */
+.ticker{border-top:1px solid var(--line); border-bottom:1px solid var(--line); overflow:hidden; padding:16px 0; background:var(--bg2)}
+.ticker-inner{display:flex; gap:48px; width:max-content; animation:scrolls 26s linear infinite; font-family:var(--display); font-weight:700; font-size:.95rem; letter-spacing:.14em}
+.ticker-inner span{display:flex; align-items:center; gap:48px; white-space:nowrap}
+.ticker-inner i{font-style:normal}
+@keyframes scrolls{to{transform:translateX(-50%)}}
+
+/* ── Sections ────────────────────────────────── */
+section{padding:110px 0; position:relative}
+.eyebrow{font-size:.78rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--dim); margin-bottom:16px}
+h2{font-family:var(--display); font-weight:800; letter-spacing:-.02em; font-size:clamp(1.9rem,4vw,3rem); line-height:1.08; max-width:22ch}
+.sect-sub{margin-top:18px; color:var(--muted); font-size:1.05rem; line-height:1.7; max-width:38rem}
+.spectrum-line{height:3px; width:72px; background:var(--spectrum); border-radius:2px; margin-top:26px}
+
+/* features */
+.feat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:54px}
+.feat{
+  background:var(--card); border:1px solid var(--line); border-radius:20px; padding:26px 24px;
+  position:relative; overflow:hidden; transition:transform .25s ease, border-color .25s ease;
+}
+.feat:hover{transform:translateY(-4px); border-color:#333}
+.feat::before{content:""; position:absolute; top:0; left:0; right:0; height:2px; background:var(--fc,var(--green)); opacity:.85}
+.feat .ic{
+  width:42px; height:42px; border-radius:13px; display:flex; align-items:center; justify-content:center;
+  font-size:1.15rem; margin-bottom:18px; background:color-mix(in srgb, var(--fc,var(--green)) 14%, transparent);
+}
+.feat h3{font-family:var(--display); font-size:1.08rem; font-weight:700; margin-bottom:9px}
+.feat p{font-size:.9rem; color:var(--muted); line-height:1.6}
+
+/* watch section */
+.watch-flex{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; margin-top:24px}
+.watch-list{list-style:none; margin-top:8px}
+.watch-list li{
+  display:flex; gap:16px; padding:20px 0; border-bottom:1px solid var(--line); align-items:flex-start;
+}
+.watch-list .n{
+  font-family:var(--display); font-weight:800; font-size:.85rem; color:#04140a; background:var(--green);
+  width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex:none; margin-top:2px;
+}
+.watch-list b{display:block; margin-bottom:4px; font-size:1rem}
+.watch-list p{color:var(--muted); font-size:.9rem; line-height:1.6}
+.watch-visual{
+  position:relative; background:var(--card); border:1px solid var(--line); border-radius:26px;
+  padding:44px 32px; text-align:center; overflow:hidden;
+}
+.watch-visual::before{
+  content:""; position:absolute; inset:-40%; background:conic-gradient(from 0deg, transparent 70%, rgba(74,222,128,.13), transparent 85%);
+  animation:spin 7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.watch-face{
+  position:relative; width:150px; height:186px; margin:0 auto; background:#050505; border-radius:38px;
+  border:5px solid #2c2c2c; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+  box-shadow:0 22px 60px rgba(0,0,0,.65);
+}
+.watch-face .hr{font-family:var(--display); font-weight:800; font-size:2rem; color:var(--red)}
+.watch-face .lbl{font-size:.62rem; letter-spacing:.18em; color:var(--dim)}
+.ecg{width:110px; height:26px}
+.ecg polyline{fill:none; stroke:var(--red); stroke-width:2; stroke-dasharray:300; stroke-dashoffset:300; animation:ecg 2.2s linear infinite}
+@keyframes ecg{to{stroke-dashoffset:0}}
+.watch-brands{position:relative; margin-top:28px; font-size:.78rem; color:var(--dim); letter-spacing:.06em; line-height:2}
+
+/* founders */
+.founders{
+  background:var(--bg2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+}
+.f-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:50px}
+.f-card{background:var(--card); border:1px solid var(--line); border-radius:20px; padding:28px 24px}
+.f-card .tag{font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; margin-bottom:14px; display:inline-block}
+.f-card h3{font-family:var(--display); font-size:1.12rem; margin-bottom:10px}
+.f-card p{color:var(--muted); font-size:.9rem; line-height:1.65}
+
+/* final cta */
+.final{text-align:center; padding:130px 0 120px}
+.final h2{margin:0 auto}
+.final .wl-form{margin:38px auto 0; justify-content:center}
+.count-note{margin-top:16px; color:var(--dim); font-size:.85rem}
+
+footer{border-top:1px solid var(--line); padding:34px 0; font-size:.8rem; color:var(--dim)}
+footer .wrap{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap}
+
+/* reveal on scroll */
+.rv{opacity:0; transform:translateY(26px); transition:opacity .7s ease, transform .7s ease}
+.rv.in{opacity:1; transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}.d5{transition-delay:.4s}
+
+@media (max-width:900px){
+  .hero-grid{grid-template-columns:1fr; gap:56px}
+  .phone-col{order:2}
+  .feat-grid{grid-template-columns:1fr 1fr}
+  .watch-flex{grid-template-columns:1fr}
+  .f-grid{grid-template-columns:1fr}
+  header{padding-top:120px; min-height:unset}
+}
+@media (max-width:560px){
+  .feat-grid{grid-template-columns:1fr}
+  .wl-form{flex-direction:column}
+  .wl-form button{padding:15px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important; transition:none!important}
+  .rv{opacity:1; transform:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#top">All<em>In</em>One</a>
+    <a class="nav-cta" href="#unete">Únete a la lista</a>
+  </div>
+</nav>
+
+<header id="top">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="badge rv"><span class="dot"></span> Muy pronto en el App Store</div>
+      <h1 class="rv d1">Toda tu vida.<br><span class="spec">Una sola app.</span></h1>
+      <p class="hero-sub rv d2">Hábitos, sueño, corazón, entrenos y energía — conectada con tu reloj. <strong>AllInOne</strong> convierte mejorar tu vida en un juego que quieres jugar todos los días.</p>
+      <form class="wl-form rv d3" data-wl>
+        <input type="email" required placeholder="tu@email.com" autocomplete="email" aria-label="Tu email">
+        <button type="submit">Quiero acceso</button>
+      </form>
+      <p class="wl-msg" data-wl-msg></p>
+      <p class="wl-note rv d4">Sin spam. Solo informes del desarrollo y acceso antes que nadie.</p>
+    </div>
+    <div class="phone-col rv d3">
+      <div style="position:relative">
+        <div class="phone">
+          <div class="notch"></div>
+          <p class="ph-hello">Buenos días 👋</p>
+          <p class="ph-name">Tu energía hoy</p>
+          <div class="ring-row">
+            <div class="ring">
+              <svg width="64" height="64" viewBox="0 0 64 64">
+                <circle cx="32" cy="32" r="27" stroke="#222" stroke-width="6" fill="none"/>
+                <circle cx="32" cy="32" r="27" stroke="var(--green)" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="32" />
+              </svg>
+              <span class="num">81</span>
+            </div>
+            <p class="ring-label"><b>Batería corporal</b>Dormiste 7 h 42 min.<br>Hoy puedes con todo.</p>
+          </div>
+          <div class="habit-row">
+            <span class="habit-dot" style="background:rgba(74,222,128,.15)">🏃</span>
+            <span class="habit-name">Entrenar 30 min</span>
+            <span class="habit-xp" style="color:var(--green); background:rgba(74,222,128,.12)">+40 XP</span>
+          </div>
+          <div class="habit-row">
+            <span class="habit-dot" style="background:rgba(96,165,250,.15)">📖</span>
+            <span class="habit-name">Leer 10 páginas</span>
+            <span class="habit-xp" style="color:var(--blue); background:rgba(96,165,250,.12)">+25 XP</span>
+          </div>
+          <div class="habit-row">
+            <span class="habit-dot" style="background:rgba(167,139,250,.15)">🧘</span>
+            <span class="habit-name">Meditar</span>
+            <span class="habit-xp" style="color:var(--purple); background:rgba(167,139,250,.12)">+20 XP</span>
+          </div>
+        </div>
+        <span class="chip" style="top:6%; right:-14%; color:var(--yellow)">⚡ Nivel 12</span>
+        <span class="chip" style="bottom:16%; left:-18%; color:var(--red); animation-delay:1.4s">❤️ 62 lpm en vivo</span>
+        <span class="chip" style="bottom:-4%; right:-6%; color:var(--teal); animation-delay:2.6s">🔥 Racha: 21 días</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-inner">
+    <span>
+      <i style="color:var(--green)">HÁBITOS</i>·<i style="color:var(--blue)">SUEÑO</i>·<i style="color:var(--red)">CORAZÓN</i>·<i style="color:var(--orange)">ENTRENO</i>·<i style="color:var(--yellow)">ENERGÍA</i>·<i style="color:var(--teal)">ENFOQUE</i>·<i style="color:var(--purple)">MISIONES</i>·<i style="color:var(--pink)">AMIGOS</i>·
+    </span>
+    <span>
+      <i style="color:var(--green)">HÁBITOS</i>·<i style="color:var(--blue)">SUEÑO</i>·<i style="color:var(--red)">CORAZÓN</i>·<i style="color:var(--orange)">ENTRENO</i>·<i style="color:var(--yellow)">ENERGÍA</i>·<i style="color:var(--teal)">ENFOQUE</i>·<i style="color:var(--purple)">MISIONES</i>·<i style="color:var(--pink)">AMIGOS</i>·
+    </span>
+  </div>
+</div>
+
+<section id="que-es">
+  <div class="wrap">
+    <p class="eyebrow rv">¿Qué es AllInOne?</p>
+    <h2 class="rv d1">La app diaria de vida que escucha a tu cuerpo.</h2>
+    <p class="sect-sub rv d2">Cada mañana, AllInOne lee tu sueño, tu corazón y tu energía desde tu reloj, y te dice exactamente qué día tienes por delante. Tú pones los hábitos; la app pone los datos, el juego y el plan. Un solo objetivo: <strong style="color:var(--fg)">que mejores de verdad, cada área, cada día.</strong></p>
+    <div class="spectrum-line rv d3"></div>
+
+    <div class="feat-grid">
+      <div class="feat rv" style="--fc:var(--green)"><div class="ic">✅</div><h3>Hábitos con XP</h3><p>Cada hábito completado suma experiencia, sube tu nivel y alarga tu racha. Constancia que se siente como progreso, porque lo es.</p></div>
+      <div class="feat rv d1" style="--fc:var(--yellow)"><div class="ic">⚡</div><h3>Batería corporal</h3><p>Tu energía real del día, calculada con tu sueño y tu estrés. Sabrás cuándo apretar y cuándo recuperar.</p></div>
+      <div class="feat rv d2" style="--fc:var(--blue)"><div class="ic">🌙</div><h3>Sueño a detalle</h3><p>Puntuación, fases, hipnograma e informe diario. Entiende por qué te despiertas como te despiertas.</p></div>
+      <div class="feat rv" style="--fc:var(--red)"><div class="ic">❤️</div><h3>Corazón en vivo</h3><p>Pulso en tiempo real, estrés y veredicto cardíaco del día. Tu corazón, por fin, hablando claro.</p></div>
+      <div class="feat rv d1" style="--fc:var(--orange)"><div class="ic">🏋️</div><h3>Entrenos que cuentan</h3><p>Detección y análisis de entrenamientos con XP por esfuerzo real. Zonas, carga y balance semanal.</p></div>
+      <div class="feat rv d2" style="--fc:var(--purple)"><div class="ic">🤖</div><h3>Coach con IA</h3><p>Un guía que conecta tus datos: “dormiste mal, hoy entrena suave y madruga menos”. Correlaciones entre lo que haces y cómo estás.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="reloj">
+  <div class="wrap">
+    <p class="eyebrow rv">Tu reloj + AllInOne</p>
+    <h2 class="rv d1">Tu reloj ya lo sabe todo. Ahora te va a servir de algo.</h2>
+    <div class="watch-flex">
+      <ul class="watch-list">
+        <li class="rv"><span class="n">1</span><div><b>Conéctalo una vez</b><p>Apple Watch, Amazfit, Garmin, Xiaomi y más — si escribe en Salud, AllInOne lo entiende.</p></div></li>
+        <li class="rv d1"><span class="n">2</span><div><b>Vive tu día normal</b><p>Pasos, sueño, pulso y entrenos entran solos. Sin formularios, sin fricción.</p></div></li>
+        <li class="rv d2"><span class="n">3</span><div><b>Despierta con tu plan</b><p>Cada mañana: tu batería, tu informe de sueño y el enfoque de hoy. En 10 segundos sabes cómo atacar el día.</p></div></li>
+      </ul>
+      <div class="watch-visual rv d2">
+        <div class="watch-face">
+          <span class="lbl">EN VIVO</span>
+          <span class="hr">62</span>
+          <svg class="ecg" viewBox="0 0 110 26"><polyline points="0,13 18,13 24,13 30,4 36,22 42,13 60,13 66,10 72,13 96,13 110,13"/></svg>
+        </div>
+        <p class="watch-brands">APPLE WATCH · AMAZFIT · GARMIN<br>XIAOMI · SAMSUNG · POLAR</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="founders" id="fundadores">
+  <div class="wrap">
+    <p class="eyebrow rv">Antes del lanzamiento</p>
+    <h2 class="rv d1">Entra ahora y sé fundador.</h2>
+    <p class="sect-sub rv d2">AllInOne se está construyendo en público, en tiempo real. Los que se unan a la lista antes del lanzamiento no son usuarios: son parte de la historia.</p>
+    <div class="f-grid">
+      <div class="f-card rv"><span class="tag" style="color:var(--green)">01 — Acceso</span><h3>Los primeros en entrar</h3><p>Cuando AllInOne llegue al App Store, tú ya estarás dentro. Acceso prioritario el día uno.</p></div>
+      <div class="f-card rv d1"><span class="tag" style="color:var(--blue)">02 — Informes</span><h3>El desarrollo, sin filtros</h3><p>Informes del progreso directos a tu correo: qué construimos, qué aprendimos y qué viene. Nada de newsletters vacías.</p></div>
+      <div class="f-card rv d2"><span class="tag" style="color:var(--yellow)">03 — Precio fundador</span><h3>Apoya el proyecto</h3><p>Los fundadores tendrán condiciones que no volverán a existir después del lanzamiento. Tu apoyo temprano financia el desarrollo.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="final" id="unete">
+  <div class="wrap">
+    <p class="eyebrow rv">La lista de espera está abierta</p>
+    <h2 class="rv d1">Tu vida entera va a caber<br>en <span class="spec" style="background:var(--spectrum); -webkit-background-clip:text; background-clip:text; color:transparent">una app</span>.</h2>
+    <form class="wl-form rv d2" data-wl>
+      <input type="email" required placeholder="tu@email.com" autocomplete="email" aria-label="Tu email">
+      <button type="submit">Unirme ahora</button>
+    </form>
+    <p class="wl-msg" data-wl-msg style="text-align:center"></p>
+    <p class="count-note rv d3">Únete antes del lanzamiento y consigue precio de fundador.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 AllInOne. Hecho con obsesión, sin enseñar la cara.</span>
+    <span>Toda tu vida. Una sola app.</span>
+  </div>
+</footer>
+
+<script>
+// ── Reveal on scroll ─────────────────────────────
+const io = new IntersectionObserver((es)=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target) } })
+},{threshold:.12})
+document.querySelectorAll('.rv').forEach(el=>io.observe(el))
+
+// ── Waitlist → Supabase ──────────────────────────
+const SUPABASE_URL = 'https://glqlyizfvuainaewqlad.supabase.co'
+const SUPABASE_KEY = 'sb_publishable_TrfOjokY3fkoMbuFMmWbpA_dj3WXuxx' // anon (public) key
+
+document.querySelectorAll('[data-wl]').forEach(form=>{
+  const msg = form.parentElement.querySelector('[data-wl-msg]') || form.nextElementSibling
+  form.addEventListener('submit', async (ev)=>{
+    ev.preventDefault()
+    const btn = form.querySelector('button')
+    const email = form.querySelector('input').value.trim().toLowerCase()
+    if(!email) return
+    btn.disabled = true
+    msg.className = 'wl-msg'
+    msg.textContent = ''
+    try{
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`,{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'apikey':SUPABASE_KEY,
+          'Authorization':`Bearer ${SUPABASE_KEY}`,
+          'Prefer':'return=minimal',
+        },
+        body: JSON.stringify({ email, source:'landing' }),
+      })
+      if(r.ok){
+        msg.className = 'wl-msg ok'
+        msg.textContent = '🎉 Dentro. Bienvenido, fundador — revisa tu correo pronto.'
+        form.reset()
+      } else if(r.status === 409){
+        msg.className = 'wl-msg ok'
+        msg.textContent = 'Ya estabas dentro 😉 Nos vemos en el lanzamiento.'
+      } else {
+        throw new Error('status '+r.status)
+      }
+    } catch(_){
+      msg.className = 'wl-msg err'
+      msg.textContent = 'Algo falló. Inténtalo de nuevo en un momento.'
+    } finally {
+      btn.disabled = false
+    }
+  })
+})
+</script>
+</body>
+</html>
