@@ -166,6 +166,14 @@ footer{position:relative; z-index:2; display:flex; justify-content:space-between
 
 .reveal{opacity:0; transform:translateY(30px); filter:blur(10px)}
 
+/* Fallback sin GSAP (CDN bloqueado, etc.): el contenido SIEMPRE aparece */
+@keyframes forceIn{to{opacity:1; filter:blur(0); transform:none}}
+html:not(.gsap-ok) .blur-in{animation:forceIn 1.1s ease .5s forwards}
+html:not(.gsap-ok) .reveal{animation:forceIn 1s ease .8s forwards}
+html:not(.gsap-ok) #chapter{height:auto; padding:120px 0}
+html:not(.gsap-ok) #chapter .stage{position:static; height:auto; flex-direction:column; gap:80px}
+html:not(.gsap-ok) #chapter .line{position:static; opacity:1; filter:none; transform:none}
+
 @media (max-width:640px){
   #chapter{height:300vh}
   .access{padding:19px 40px}
@@ -326,6 +334,7 @@ const $ = id => document.getElementById(id)
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
 
 gsap.registerPlugin(ScrollTrigger)
+document.documentElement.classList.add('gsap-ok')
 
 // ═══ preloader → hero ═══════════════════════════
 addEventListener('load', () => {
